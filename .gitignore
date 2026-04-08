@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# pip
+pip-wheel-metadata/
+
+# pytest
+.pytest_cache/
+
+# Generated output
+examples/output/
+
+# Claude Code — local scope only (project/user scope SKILL.md should be committed if intended)
+.claude/skills/
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db

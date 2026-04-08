@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resume-skill"
+version = "0.1.0"
+description = "Claude Code skill: build_tailored_resume — tailors a master resume to a specific job and renders a polished .docx"
+requires-python = ">=3.10"
+dependencies = [
+    "python-docx>=1.1.0",
+    "lxml>=5.0.0",
+]
+
+[project.scripts]
+# Installed as `resume-skill` CLI command in PATH.
+# Called by SKILL.md and bin/resume-skill wrapper.
+resume-skill = "resume_skill.cli:main"
+
+[tool.setuptools]
+# Explicitly list all packages because packages.find cannot discover
+# resume_skill/* when the source directory is named src/ (not resume_skill/).
+packages = [
+    "resume_skill",
+    "resume_skill.rendering",
+    "resume_skill.schemas",
+    "resume_skill.utils",
+    "resume_skill.validation",
+]
+
+[tool.setuptools.package-dir]
+# Map the resume_skill package name to the src/ directory.
+# resume_skill.rendering → src/rendering/, etc.
+"resume_skill" = "src"

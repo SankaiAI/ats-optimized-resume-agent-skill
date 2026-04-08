@@ -1,0 +1,105 @@
+{
+  "candidate_level": "senior_ic",
+  "target_role": "Senior Data Analyst, Payments Product",
+  "target_company": "Stripe",
+  "section_order": ["header", "summary", "skills", "experience", "projects", "education", "certifications"],
+  "header": {
+    "name": "Alex Chen",
+    "email": "alex.chen@email.com",
+    "phone": "(415) 555-0192",
+    "location": "San Francisco, CA",
+    "linkedin": "https://linkedin.com/in/alexchen",
+    "github": "https://github.com/alexchen",
+    "website": ""
+  },
+  "summary": "Data analyst with 5 years building SQL pipelines, experimentation frameworks, and self-serve analytics for fintech and payments products. Strong track record shipping dbt models and Statsig A/B tests that directly moved product KPIs, plus a habit of translating messy data into decisions finance and product leadership actually act on.",
+  "skills": {
+    "core": ["SQL (BigQuery, Snowflake, Redshift, PostgreSQL)", "Python", "dbt", "A/B Testing / Experiment Design"],
+    "tools": ["Looker", "Tableau", "Mode", "Airflow", "Statsig", "Segment"],
+    "methods": ["Cohort Analysis", "Funnel Analysis", "Anomaly Detection", "Propensity Modeling", "Regression"],
+    "domains": ["Product Analytics", "Payments", "Fintech", "Growth", "SLA Monitoring"]
+  },
+  "experience": [
+    {
+      "title": "Senior Data Analyst",
+      "company": "Brex",
+      "location": "San Francisco, CA",
+      "dates": "Jan 2022 – Present",
+      "bullets": [
+        "Owned analytics for the SMB card product — built SQL + dbt pipelines tracking activation and spend adoption across 2,400 customers; surfaced cohort patterns that shifted Q3 roadmap priorities for 3 PMs.",
+        "Designed an A/B test framework in Statsig for the card onboarding flow, improving 30-day activation rate by 14% and cutting time-to-first-spend by 4 days.",
+        "Automated 6 weekly finance reports via Airflow + BigQuery, saving ~8 hours/week; built Looker dashboards used daily by the VP Finance and CFO.",
+        "Partnered with the ML team to operationalize a churn propensity model into a manual review queue, preventing ~$340K in write-offs over 2 quarters.",
+        "Audited 80+ production queries and reduced average BigQuery compute cost by 28% across the warehouse."
+      ],
+      "links": []
+    },
+    {
+      "title": "Data Analyst",
+      "company": "Checkr",
+      "location": "San Francisco, CA",
+      "dates": "Aug 2019 – Dec 2021",
+      "bullets": [
+        "Owned background-check funnel analytics across 300K+ monthly completions; built anomaly detection that flagged SLA breaches before 94% of customer complaints.",
+        "Identified 3 workflow bottlenecks in the adjudication process, driving a 22% reduction in average report-to-close time.",
+        "Built self-serve Tableau dashboards for operations and customer success, eliminating 30+ hours/month of ad hoc data requests.",
+        "Instrumented 6 previously unmeasured product features via Segment in partnership with engineering; enabled first-party attribution for new product lines.",
+        "Ran quarterly business reviews for 2 enterprise accounts ($4M+ combined ARR), presenting cohort and retention analysis to VP-level stakeholders."
+      ],
+      "links": []
+    },
+    {
+      "title": "Business Intelligence Intern",
+      "company": "Postmates",
+      "location": "Los Angeles, CA",
+      "dates": "Jun 2018 – Aug 2018",
+      "bullets": [
+        "Built delivery SLA reporting dashboard in Tableau for ops leadership; queried and joined 3 MySQL data sources to surface order-level latency metrics."
+      ],
+      "links": []
+    }
+  ],
+  "projects": [
+    {
+      "name": "SQL Query Optimizer",
+      "subtitle": "Personal project · Python, BigQuery API",
+      "location": "",
+      "dates": "2023",
+      "bullets": [
+        "CLI tool that analyzes BigQuery query plans and recommends partitioning and clustering improvements; 340 GitHub stars, ~80 monthly active users."
+      ],
+      "url": "https://github.com/alexchen/sql-optimizer"
+    },
+    {
+      "name": "Stripe Payments Funnel Demo",
+      "subtitle": "Hackathon project · Python, Streamlit",
+      "location": "",
+      "dates": "2022",
+      "bullets": [
+        "Built a checkout funnel analytics dashboard modeling conversion drop-off by payment method and geography using Stripe's public test data."
+      ],
+      "url": "https://github.com/alexchen/stripe-funnel-demo"
+    }
+  ],
+  "education": [
+    {
+      "school": "UC San Diego",
+      "location": "San Diego, CA",
+      "dates": "2017 – 2021",
+      "degree": "B.S. Cognitive Science, Data Science emphasis",
+      "details": [
+        "GPA: 3.7 · Relevant coursework: Statistical Inference, Machine Learning, Database Systems, Experimental Design"
+      ]
+    }
+  ],
+  "certifications": [
+    "dbt Fundamentals (2022)"
+  ],
+  "awards": [],
+  "metadata": {
+    "page_target": "one_page",
+    "tone": "modern_professional",
+    "ats_focus": true,
+    "humanization_pass_complete": true
+  }
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# resume-skill — CLI wrapper for the resume renderer.
+#
+# Claude Code automatically adds the plugin's bin/ directory to the Bash
+# tool's PATH when the plugin is installed, so this command is available
+# in every session where the plugin is enabled.
+#
+# $CLAUDE_PLUGIN_ROOT is set by Claude Code to the plugin's install directory.
+
+set -e
+
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+
+# ── Ensure python-docx and lxml are installed ─────────────────────────────────
+# On first run this installs deps silently; subsequent runs are instant.
+python -c "import docx" 2>/dev/null || pip install python-docx lxml --quiet
+
+# ── Run the CLI ───────────────────────────────────────────────────────────────
+PYTHONPATH="$PLUGIN_ROOT:$PYTHONPATH" python "$PLUGIN_ROOT/src/cli.py" "$@"

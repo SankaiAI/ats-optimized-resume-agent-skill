@@ -1,0 +1,14 @@
+{
+  "name": "resume-skill",
+  "version": "0.1.0",
+  "description": "Transforms a master resume and job description into a tailored, ATS-optimized Word document (.docx) with human-sounding bullets and deterministic table-based layout.",
+  "author": {
+    "name": "resume-skill contributors",
+    "url": "https://github.com/your-org/resume-skill"
+  },
+  "repository": "https://github.com/your-org/resume-skill",
+  "homepage": "https://github.com/your-org/resume-skill#readme",
+  "license": "MIT",
+  "keywords": ["resume", "docx", "ats", "job-search", "career"],
+  "skills": "./skills/"
+}

@@ -1,0 +1,31 @@
+{
+  "name": "resume-skill-marketplace",
+  "owner": {
+    "name": "resume-skill contributors",
+    "email": "your-email@example.com"
+  },
+  "metadata": {
+    "description": "Community marketplace for the resume-skill Claude Code plugin",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "resume-skill",
+      "description": "Transforms a master resume and job description into a tailored, ATS-optimized Word document (.docx) with human-sounding bullets and deterministic table-based layout.",
+      "version": "0.1.0",
+      "source": {
+        "source": "github",
+        "repo": "your-org/resume-skill",
+        "ref": "main"
+      },
+      "author": {
+        "name": "resume-skill contributors"
+      },
+      "homepage": "https://github.com/your-org/resume-skill#readme",
+      "repository": "https://github.com/your-org/resume-skill",
+      "license": "MIT",
+      "keywords": ["resume", "docx", "ats", "job-search", "career"],
+      "category": "productivity"
+    }
+  ]
+}
