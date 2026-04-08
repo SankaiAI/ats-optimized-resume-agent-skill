@@ -52,7 +52,7 @@ Then invoke it:
 
 ```bash
 git clone https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git
-cd resume-skill
+cd ats-optimized-resume-agent-skill
 ```
 
 **Step 2 — Run the script**

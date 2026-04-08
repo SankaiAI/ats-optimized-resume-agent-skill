@@ -2,7 +2,7 @@
 name: build-tailored-resume
 description: "Use this skill whenever the user wants to create a tailored resume for a specific job posting. Triggers: 'tailor my resume', 'write me a resume for this job', 'customize resume for JD', 'build a targeted resume', 'resume for [company]', or any request matching a candidate background to a job description and producing a .docx. Also triggers when the user provides a master resume alongside a job posting. Do NOT use for general resume advice or cover letters."
 argument-hint: "[optional: output filename]"
-allowed-tools: Read Write Edit Bash Glob Grep
+allowed-tools: Read Write Edit Bash Glob Grep WebSearch WebFetch
 license: MIT
 ---
 
@@ -14,147 +14,270 @@ Your job is to take a user's master resume (or raw experience inventory) and a t
 1. A tailored, role-specific resume with human-sounding bullets
 2. A polished Word document (.docx) via deterministic Python rendering
 
-## How to run this skill
+---
 
-When the user invokes this skill:
-1. Collect required inputs (see Intake section)
-2. Run through the internal analysis pipeline (see Workflow)
-3. Produce a structured JSON representing the tailored resume
-4. Call the Python renderer to generate the .docx
+## Workflow design
+
+This skill uses a **guardrailed workflow, not rigid choreography.**
+
+- **Required stages** always run — they cannot be skipped
+- **Optional stages** run only when conditions warrant
+- **Gates** are hard stops between stages — you cannot advance past a gate until its conditions are met
+- **Flexibility lives within stages**, not in skipping them
+
+```
+[INTAKE] ──GATE 1──> [JD ANALYSIS] ──GATE 2──> [STRATEGY] ──GATE 3──> [CONTENT TAILORING]
+                                                     ^                          |
+                                             [OPT: company research]    [humanization pass]
+                                             [OPT: team inference]             |
+                                                                        ──GATE 4──> [ATS CHECK]
+                                                                                        |
+                                                                                ──GATE 5──> [RENDER]
+                                                                                                |
+                                                                                        ──GATE 6──> [VALIDATE]
+```
+
+**Announce each stage** before starting it:
+```
+=== [Stage Name] ===
+```
+
+**Adapt your depth per stage** based on how much the user has already provided. If inputs are complete and explicit, move fast. If inputs are messy or incomplete, do more work.
 
 ---
 
-## Intake
+## Hard sequencing rules
 
-Before starting, verify you have:
+These cannot be bypassed regardless of how complete the input is:
 
-**Required:**
-- Full name, email, phone
-- Master resume / experience inventory (can be messy text, old resume, LinkedIn export, bullet bank)
+- **No drafting before JD analysis is complete** (Gate 2 must pass)
+- **No ATS check before bullet selection and rewriting** (Gate 4 must pass)
+- **No rendering before content validation** (Gate 4 must pass)
+- **No final DOCX before JSON schema validation** (Gate 5 must pass)
+- **No final output before humanization pass** (Gate 4 must pass)
+
+---
+
+## Stage 1 — Intake (Required)
+
+Collect and normalize all inputs.
+
+**Required inputs:**
+- Candidate full name, email, phone
+- Master resume or experience inventory (any format: old resume, raw text, LinkedIn export, brag doc)
 - Target job description
 - Target company name
 
-**Optional but valuable:**
+**Optional inputs** (infer or skip if not provided):
 - LinkedIn, GitHub, portfolio URLs
-- Target career level (new_grad / entry_level / mid_level / senior_ic / manager / director / auto)
-- Desired output length (one_page / two_page / auto)
-- Tone preference (conservative / modern_professional / technical / analytical)
-- City/state (omit if privacy preferred)
-- Specific roles or projects to emphasize or downplay
-- Metrics the user is confident defending
+- Career level preference (`new_grad / entry_level / mid_level / senior_ic / manager / director / auto`)
+- Output length preference (`one_page / two_page / auto`)
+- Tone preference (`conservative / modern_professional / technical / analytical`)
+- Location (omit if privacy preferred)
+- Roles or projects to emphasize or downplay
+- Specific metrics the user can confidently defend
 
-If required info is missing, ask **concise targeted questions** — do not interrogate. Infer where reasonable.
+**Flexibility:** Ask only what is blocking. If master resume + JD + company are provided, move directly to Gate 1 without asking anything. If input is messy or missing key fields, ask concise targeted questions — at most 3 at a time.
+
+### GATE 1
+
+Before advancing, verify:
+- [ ] Candidate name, email, phone are known or inferable
+- [ ] Master resume or experience inventory exists and is readable
+- [ ] Target job description is available
+- [ ] Target company name is known
+
+If any gate condition fails, ask the user for the missing input before proceeding.
 
 ---
 
-## Workflow
+## Stage 2 — JD Analysis (Required)
 
-### Step 1 — Parse master resume
+Extract from the job description:
 
-Extract from the user's source material:
-- All roles, companies, dates, locations
-- All bullets, tools, skills, accomplishments
-- Projects, education, certifications, awards
-- URLs, metrics, seniority signals
-- Domains and function areas
-
-Normalize everything into structured candidate data. Accept messy input — raw text, multiple resume versions, brag docs, LinkedIn export.
-
-### Step 2 — Analyze the job description
-
-Extract from the JD:
-- Required and preferred qualifications
-- Repeated skills and verbs (these are high-signal)
+- Required vs. preferred qualifications (distinguish clearly)
+- Repeated skills and action verbs — these are high-signal ATS keywords
 - Likely business KPIs and domain language
-- Seniority clues and leadership expectations
-- Business function: product / marketing / growth / ops / finance / data / platform / research
-- Likely ATS screening criteria
+- Seniority clues (IC vs. manager, scope of ownership, leadership expectations)
+- Business function: product / marketing / growth / ops / finance / data / platform / research / engineering
+- Likely ATS screening terms
 
-### Step 3 — Research company context
+Output a brief summary of what this role prioritizes — 3-5 bullet points. This drives everything downstream.
 
-If company info is provided or can be inferred:
-- Identify business model (B2B SaaS, eComm, marketplace, adtech, healthcare, etc.)
-- Map company language to candidate experience language
-- Identify which parts of the candidate's background most directly map to company priorities
+### GATE 2
 
-**Domain language mapping:**
-- B2B SaaS → product adoption, ARR, churn, activation, experimentation
-- eCommerce → conversion, ROAS, CAC, LTV, funnel, merchandising
-- Healthcare/insurance → compliance, accuracy, turnaround, cost containment
-- Marketplace → supply-demand balance, pricing, merchant health, fulfillment
-- Adtech → incrementality, attribution, campaign performance, clean room
+Before advancing, verify:
+- [ ] Required qualifications are extracted
+- [ ] Top 5-8 ATS keywords are identified
+- [ ] Role seniority level is determined
+- [ ] Business function and domain are identified
 
-### Step 4 — Infer candidate level and strategy
+---
 
-Before writing anything, define:
-- Why this candidate fits this role (top 3 strengths to emphasize)
-- What 1-2 background areas to downplay
-- What the top-of-page-1 story must convey
-- Which section order fits this level (see Level Rules)
+## Stage 2a — Company Research (Optional)
 
-**Level rules:**
+**Run this stage when:** company context is not already obvious from the JD, or when the company name is unfamiliar.
+
+**Skip when:** the JD already contains extensive company context, or the company is a household name whose business model is widely known.
+
+Use WebSearch: `"[company name]" business model products customers`
+
+Identify:
+- Business model (B2B SaaS, eCommerce, marketplace, adtech, healthcare, staffing, fintech, etc.)
+- Core products or services
+- Likely business KPIs and priority language
+- Company size / stage if visible
+
+**Domain language mapping — use to align candidate language to company language:**
+
+| Domain | Key language |
+|--------|-------------|
+| B2B SaaS | product adoption, ARR, churn, activation, time-to-value, seat expansion |
+| eCommerce | conversion, ROAS, CAC, LTV, funnel, merchandising, cart abandonment |
+| Healthcare / insurance | compliance, accuracy, turnaround, cost containment, prior auth |
+| Marketplace | supply-demand balance, pricing, merchant health, fulfillment, take rate |
+| Adtech | incrementality, attribution, campaign performance, clean room, reach |
+| Staffing / HR tech | placement rate, time-to-fill, candidate quality, client retention |
+| Fintech | payment volume, fraud rate, underwriting, activation, regulatory |
+
+## Stage 2b — Team Inference (Optional)
+
+**Run this when:** the JD hints at team structure (e.g., "join a team of X", "work with product and engineering", "report to VP of...") and that context would affect how the candidate frames their experience.
+
+Infer:
+- Who the candidate would report to and collaborate with
+- What cross-functional influence the role requires
+- Whether individual contributor or collaborative execution is emphasized
+
+---
+
+## Stage 3 — Strategy (Required)
+
+Before writing a single bullet, define the resume's strategy in writing:
+
+1. **Top 3 strengths to lead with** — why this candidate fits this role
+2. **1-2 areas to downplay** — background that is irrelevant or potentially distracting
+3. **Page 1 headline story** — what a recruiter sees in 10 seconds
+4. **Section order** — based on candidate level:
 
 | Level | Section order |
 |-------|---------------|
 | new_grad / intern | Education → Experience → Projects → Skills → Awards |
-| entry_level | Summary (opt) → Experience → Skills → Education → Projects |
+| entry_level | Experience → Skills → Education → Projects |
 | mid_level / senior_ic | Summary → Skills → Experience → Projects → Education |
-| manager / director | Executive Summary → Leadership Areas → Experience → Education → Boards/Certs |
+| manager / director | Executive Summary → Experience → Education → Boards/Certs |
 
-### Step 5 — Select and rank bullets
+5. **Sections to include or omit:**
+   - Summary: include for mid+ level; optional for entry; omit for new_grad
+   - Projects: include if they add material signal not covered by experience
+   - Certifications: include only if role-relevant
+   - Awards: include only if senior or prestigious
+
+6. **Page target:** one_page or two_page — decide based on experience depth and role seniority, not user preference alone
+
+### GATE 3
+
+Before advancing, verify:
+- [ ] Strategy is written out (not just decided internally)
+- [ ] Section order and page target are set
+- [ ] At least 3 specific strengths are identified that link candidate experience to JD requirements
+
+---
+
+## Stage 4 — Content Tailoring (Required)
+
+### 4a — Bullet selection
 
 From the master resume:
-- Choose bullets based on target fit, NOT just recency
+- Select bullets based on **target fit**, not recency
 - Remove good-but-irrelevant bullets
-- Prioritize bullets that contain role-relevant keywords, metrics, and ownership signals
-- Keep 3-5 bullets per role; 2-3 for older or less relevant roles
-- Match bullet count to page target
+- Prioritize: role-relevant keywords, concrete metrics, ownership signals, scope signals
+- Keep 3-5 bullets per recent/relevant role; 2-3 for older or less relevant roles
+- Match total bullet count to page target
 
-### Step 6 — Rewrite bullets (human-style)
+### 4b — Bullet rewriting
+
+Rewrite selected bullets in human-professional style.
 
 **Strong bullet structure:**
-> Action verb + what you built/analyzed/drove + method/tool + measurable result + scale/context
+> Action verb → what was built/analyzed/driven → method or tool → measurable result → scale or context
 
 **Example:**
-> "Built SQL and Tableau dashboards to track campaign KPIs, cutting weekly reporting time by 90% across 12 stakeholders."
+> "Built SQL and Tableau dashboards tracking campaign KPIs, cutting weekly reporting time by 90% across 12 stakeholders."
 
 **Rules:**
-- Use concrete verbs tied to actual work (built, analyzed, shipped, reduced, negotiated, automated)
-- Use specific nouns, not vague strategic ones
-- Vary sentence rhythm — not every bullet starts the same way
-- Avoid: "responsible for", "helped with", "assisted in", "supported"
-- Avoid: "results-driven", "dynamic", "visionary", "innovative" (unless truly necessary)
-- Avoid: generic AI phrasing (too polished, too balanced, corporate cliché)
-- Every bullet must pass: "Could the candidate explain this naturally in 30 seconds?"
+- Use concrete verbs tied to real work: built, analyzed, shipped, reduced, negotiated, automated, redesigned
+- Use specific nouns (pipeline names, tool names, team sizes, dollar amounts)
+- Vary sentence rhythm — avoid starting 3+ consecutive bullets the same way
+- Never: "responsible for", "helped with", "assisted in", "supported"
+- Never: "results-driven", "dynamic", "passionate", "visionary", "innovative"
+- Never: generic AI summary language ("proven track record of delivering value...")
+- Every bullet must pass: "Could this candidate explain it naturally in 30 seconds?"
 - Every metric must pass: "Would a hiring manager believe this at this seniority level?"
 
-**If no metric exists**, use another concrete dimension:
-- Scale (number of users, tables, pipelines, markets)
-- Speed (latency, turnaround, frequency)
-- Accuracy (error rate, model precision)
-- Adoption (team count, stakeholder count)
-- Throughput (volume, coverage)
+**If no metric exists**, use a concrete dimension instead:
+- Scale: number of users, tables, pipelines, markets
+- Speed: latency, turnaround time, frequency
+- Accuracy: error rate, model precision, test coverage
+- Adoption: team count, stakeholder count, integration count
+- Throughput: volume processed, coverage rate
 
-**Humanization pass** — before finalizing, check:
-- [ ] No vague buzzwords
-- [ ] No repeated sentence syntax across 3+ consecutive bullets
-- [ ] No suspicious over-optimization
-- [ ] No generic AI summary patterns ("results-driven professional with a passion for...")
-- [ ] Every bullet sounds like something a real person would say
+### 4c — Humanization pass (Required)
 
-### Step 7 — ATS alignment check
+Run this pass over all written content. Print results:
 
-Verify:
-- Section headings use standard terms (Experience, Education, Skills, Projects, Certifications)
-- Job-relevant keywords from JD appear naturally in bullets and skills
-- Contact info is clean and parse-friendly
-- No keyword stuffing
-- No decorative symbols or icons
-- Dates and titles are consistent
+```
+Humanization check:
+[PASS] No vague buzzwords
+[PASS] No repeated sentence syntax across 3+ consecutive bullets
+[PASS] No suspicious over-optimization
+[PASS] No generic AI summary patterns
+[PASS] All bullets sound like a real person wrote them
+```
 
-### Step 8 — Generate structured resume JSON
+If any check fails, rewrite the offending bullets before proceeding.
 
-Produce the final tailored resume as JSON matching this schema:
+### GATE 4
+
+Before advancing, verify:
+- [ ] All bullets are selected and rewritten
+- [ ] Humanization pass is complete with all checks passing
+- [ ] No unsupported claims (invented metrics, tools, titles, or projects the user never mentioned)
+- [ ] Content fits the page target
+
+---
+
+## Stage 5 — ATS Check (Required)
+
+Run after bullet selection and rewriting. Cannot run before Gate 4.
+
+Print results:
+
+```
+ATS check:
+[PASS] Section headings are standard (Experience, Education, Skills, Projects, Certifications)
+[PASS] Top JD keywords appear naturally — matched: SQL, Tableau, A/B testing, cohort analysis, ETL
+[PASS] Contact info is clean and parse-friendly
+[PASS] No keyword stuffing
+[PASS] No decorative symbols or icons in body text
+[PASS] Dates and titles are consistent
+```
+
+If any check fails, fix before proceeding.
+
+### GATE 5
+
+Before advancing, verify:
+- [ ] All ATS checks pass
+- [ ] At least 5 JD keywords are present naturally in the content
+
+---
+
+## Stage 6 — Render (Required)
+
+Generate the structured resume JSON, then call the renderer.
+
+### JSON schema
 
 ```json
 {
@@ -224,63 +347,51 @@ Produce the final tailored resume as JSON matching this schema:
 }
 ```
 
-### Step 9 — Render the DOCX
-
-After generating the JSON, call the CLI renderer (works from any directory after install):
+### Render command
 
 ```bash
 resume-skill render --input tailored_resume.json --output tailored_resume.docx
 ```
 
-Validate only (no DOCX output):
-
+Validate only (no DOCX):
 ```bash
 resume-skill validate --input tailored_resume.json
 ```
 
-The renderer produces a polished Word document with:
-- Table-based layout (invisible inner borders, selective visible section dividers)
-- Clickable hyperlinks for email, LinkedIn, GitHub, project URLs
-- Right-aligned dates opposite left-aligned company/title
-- Section headers with bottom border line
-- Proper bullet indentation
+### GATE 6
 
-### Step 10 — Validate
-
-After rendering, verify:
-- [ ] No missing required header fields
-- [ ] No broken hyperlinks
-- [ ] No placeholder text remaining
-- [ ] Section order matches strategy for candidate level
-- [ ] Bullet counts fit page target
-- [ ] No duplicate bullets
-- [ ] Humanization pass complete
+Before declaring done, verify:
+- [ ] JSON schema validation passes (`resume-skill validate` reports PASS)
+- [ ] DOCX was written without errors
+- [ ] Output path is confirmed and shown to the user
 
 ---
 
-## Quality review passes
+## Stage 7 — Final Validation (Required)
 
-Before finalizing, run these passes mentally:
+After rendering, confirm:
+- [ ] No missing required header fields
+- [ ] No placeholder text remaining (e.g. "YOUR NAME", "TODO")
+- [ ] Section order matches strategy decided in Stage 3
+- [ ] Bullet counts fit page target
+- [ ] No duplicate bullets across roles
 
-| Pass | Check |
-|------|-------|
-| Role fit | Does the resume clearly fit the target job? Are the right strengths on page 1? |
-| ATS fit | Are keywords from the JD present naturally? Are headings standard? |
-| Recruiter scan | Is the top third of page 1 immediately compelling in 15 seconds? |
-| Hiring manager | Are bullets specific, real, and defensible? Is the level appropriate? |
-| Anti-AI | Does it sound like a real person, not synthetic resume sludge? |
-| DOCX format | Are borders, alignment, spacing, and links correct? |
+Then deliver to the user:
+- Full path to the `.docx` file
+- Brief strategy summary: what was emphasized, what was downplayed, ATS keywords woven in
+- Any honest gaps (missing tools, unsupported claims flagged, things to verify)
 
 ---
 
 ## What NOT to do
 
-- Do not invent tools, metrics, projects, or leadership that the user didn't mention
+- Do not invent tools, metrics, projects, or leadership the user never mentioned
 - Do not keyword stuff
 - Do not use generic AI summaries ("passionate professional who thrives in dynamic environments")
 - Do not require the user to manually fix Word formatting
-- Do not ask excessive clarifying questions — infer where reasonable
+- Do not ask more than 3 clarifying questions at a time
 - Do not dump generic resume advice without producing the actual tailored output
+- Do not skip a required stage even if the input looks complete
 
 ---
 
@@ -289,7 +400,7 @@ Before finalizing, run these passes mentally:
 All layout settings are in `src/rendering/config.py`:
 
 | Setting | Controls |
-|---------|---------- |
+|---------|----------|
 | `font_name` | Body and contact font family |
 | `name_font_size` | Candidate name size (pt) |
 | `body_font_size` | Bullet and body text size (pt) |
@@ -300,4 +411,4 @@ All layout settings are in `src/rendering/config.py`:
 | `section_order` | Default section ordering |
 | `link_color` | Hyperlink hex color |
 
-Override any value by passing a modified `RenderConfig` to `ResumeRenderer`, or set `metadata.section_order` in the resume JSON to override section ordering per resume.
+Override any value by passing a modified `RenderConfig` to `ResumeRenderer`, or set `metadata.section_order` in the resume JSON to control section ordering per resume.
