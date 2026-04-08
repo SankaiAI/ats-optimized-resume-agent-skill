@@ -1,7 +1,7 @@
 {
   "name": "resume-skill-marketplace",
   "owner": {
-    "name": "resume-skill contributors",
+    "name": "SankaiAI",
     "email": "your-email@example.com"
   },
   "metadata": {
@@ -15,14 +15,14 @@
       "version": "0.1.0",
       "source": {
         "source": "github",
-        "repo": "your-org/resume-skill",
+        "repo": "SankaiAI/ats-optimized-resume-agent-skill",
         "ref": "main"
       },
       "author": {
-        "name": "resume-skill contributors"
+        "name": "SankaiAI"
       },
-      "homepage": "https://github.com/your-org/resume-skill#readme",
-      "repository": "https://github.com/your-org/resume-skill",
+      "homepage": "https://github.com/SankaiAI/ats-optimized-resume-agent-skill#readme",
+      "repository": "https://github.com/SankaiAI/ats-optimized-resume-agent-skill",
       "license": "MIT",
       "keywords": ["resume", "docx", "ats", "job-search", "career"],
       "category": "productivity"

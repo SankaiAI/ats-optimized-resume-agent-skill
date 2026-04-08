@@ -51,7 +51,7 @@ Then invoke it:
 **Step 1 — Download**
 
 ```bash
-git clone https://github.com/your-org/resume-skill.git
+git clone https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git
 cd resume-skill
 ```
 
@@ -102,7 +102,7 @@ Then invoke it:
 **Step 1 — Download**
 
 ```bash
-git clone https://github.com/your-org/resume-skill.git
+git clone https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git
 cd resume-skill
 ```
 

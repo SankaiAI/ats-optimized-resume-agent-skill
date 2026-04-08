@@ -34,7 +34,7 @@ Open a terminal in the `resume_skill/` folder and run:
 git init
 git add .
 git commit -m "Initial release: resume-skill Claude Code plugin v0.1.0"
-git remote add origin https://github.com/YOUR-USERNAME/resume-skill.git
+git remote add origin https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git
 git branch -M main
 git push -u origin main
 ```
@@ -56,8 +56,8 @@ Open `.claude-plugin/plugin.json` and replace the placeholder URLs:
     "name": "YOUR NAME",
     "url": "https://github.com/YOUR-USERNAME"
   },
-  "repository": "https://github.com/YOUR-USERNAME/resume-skill",
-  "homepage": "https://github.com/YOUR-USERNAME/resume-skill#readme",
+  "repository": "https://github.com/SankaiAI/ats-optimized-resume-agent-skill",
+  "homepage": "https://github.com/SankaiAI/ats-optimized-resume-agent-skill#readme",
   "license": "MIT",
   "keywords": ["resume", "docx", "ats", "job-search", "career"],
   "skills": "./skills/"
@@ -106,7 +106,7 @@ Go to one of these two submission forms (both go to the same place):
 
 Fill in the form:
 - **Plugin name:** `resume-skill`
-- **Repository URL:** `https://github.com/YOUR-USERNAME/resume-skill`
+- **Repository URL:** `https://github.com/SankaiAI/ats-optimized-resume-agent-skill`
 - **Description:** paste from `plugin.json`
 - **Category:** Productivity
 - **Keywords:** resume, docx, ats, job-search, career
@@ -174,14 +174,14 @@ If you don't want to wait for official approval, or want to distribute to a spec
       "version": "0.1.0",
       "source": {
         "source": "github",
-        "repo": "YOUR-USERNAME/resume-skill",
+        "repo": "SankaiAI/ats-optimized-resume-agent-skill",
         "ref": "main"
       },
       "author": {
         "name": "YOUR NAME"
       },
-      "homepage": "https://github.com/YOUR-USERNAME/resume-skill#readme",
-      "repository": "https://github.com/YOUR-USERNAME/resume-skill",
+      "homepage": "https://github.com/SankaiAI/ats-optimized-resume-agent-skill#readme",
+      "repository": "https://github.com/SankaiAI/ats-optimized-resume-agent-skill",
       "license": "MIT",
       "keywords": ["resume", "docx", "ats"],
       "category": "productivity"
