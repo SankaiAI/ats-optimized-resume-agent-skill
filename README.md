@@ -1,5 +1,7 @@
 # resume-skill — build-tailored-resume
 
+English | [中文](./README_zh.md)
+
 A Claude Code skill that transforms a master resume and a target job description into a polished, tailored Word document (.docx).
 
 Once installed, invoke it in Claude Code with:
