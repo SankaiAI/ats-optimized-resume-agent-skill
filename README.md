@@ -9,6 +9,131 @@ Once installed, invoke it in Claude Code with:
 
 ---
 
+## What you need to provide
+
+### Required
+
+| Input | What it should contain |
+|-------|------------------------|
+| **Master resume** | Every role, bullet, project, skill, and metric you have ever done — the more complete, the better. The skill selects and rewrites from this pool; it does not invent. Accepted formats: `.docx`, `.pdf`, `.txt`, `.md`, or pasted text. |
+| **Job description** | The full JD for the role you are applying to. Paste it as text or drop a `.md`/`.txt` file. |
+| **Company name** | The name of the hiring company. |
+
+### Optional (the skill infers these if not provided)
+
+| Input | Effect |
+|-------|--------|
+| LinkedIn / GitHub / portfolio URL | Added as clickable links in the header |
+| Career level | Controls section order and bullet depth. One of: `new_grad`, `entry_level`, `mid_level`, `senior_ic`, `manager`, `director` |
+| Page preference | `one_page` or `two_page`. Defaults to what fits the content. |
+| Tone | `conservative`, `modern_professional`, `technical`, or `analytical` |
+| Roles or projects to emphasize or exclude | Overrides the skill's default selection logic |
+| Metrics you are confident defending | Prevents the skill from softening numbers that are accurate |
+
+### Tips for your master resume
+
+- **Include everything** — roles you think are irrelevant, old projects, side work. The skill decides what to cut.
+- **Keep raw bullets, not polished ones** — the skill rewrites for you. Messy input is fine.
+- **Add numbers wherever you have them** — even rough ones ("~50 users", "saved about 3 hours/week"). The skill will not invent metrics you do not provide.
+
+---
+
+## How it works
+
+Once you provide your inputs, the skill runs through a guardrailed pipeline. Required stages always run. Optional stages run only when they add value.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         USER PROVIDES                               │
+│            master resume  +  job description  +  company            │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               │
+                               v
+                 ┌─────────────────────────┐
+                 │   STAGE 1: INTAKE       │  Normalize all inputs.
+                 │   (required)            │  Ask only if something
+                 │                         │  critical is missing.
+                 └────────────┬────────────┘
+                              │ GATE 1: candidate data + JD + company exist
+                              v
+                 ┌─────────────────────────┐
+                 │   STAGE 2: JD ANALYSIS  │  Extract required skills,
+                 │   (required)            │  ATS keywords, seniority
+                 │                         │  signals, domain language.
+                 └────────────┬────────────┘
+                              │ GATE 2: keywords + seniority identified
+                              │
+                    ┌─────────┴──────────┐
+                    │                    │
+                    v                    v
+       ┌────────────────────┐  ┌─────────────────────┐
+       │ STAGE 2a: COMPANY  │  │ STAGE 2b: TEAM      │
+       │ RESEARCH           │  │ INFERENCE           │
+       │ (optional)         │  │ (optional)          │
+       │                    │  │                     │
+       │ Runs when company  │  │ Runs when JD hints  │
+       │ context is not     │  │ at team structure   │
+       │ obvious from JD.   │  │ or reporting line.  │
+       │ Uses web search.   │  │                     │
+       └────────────────────┘  └─────────────────────┘
+                    │                    │
+                    └─────────┬──────────┘
+                              v
+                 ┌─────────────────────────┐
+                 │   STAGE 3: STRATEGY     │  Decide: which strengths
+                 │   (required)            │  to lead with, what to
+                 │                         │  downplay, section order,
+                 │                         │  page target, summary Y/N.
+                 └────────────┬────────────┘
+                              │ GATE 3: strategy written, section order set
+                              v
+                 ┌─────────────────────────┐
+                 │   STAGE 4: CONTENT      │  Select bullets by fit
+                 │   TAILORING             │  (not recency). Rewrite
+                 │   (required)            │  in human-professional
+                 │                         │  style. Humanization pass.
+                 └────────────┬────────────┘
+                              │ GATE 4: all bullets rewritten + humanization
+                              │         pass complete + no unsupported claims
+                              v
+                 ┌─────────────────────────┐
+                 │   STAGE 5: ATS CHECK    │  Verify JD keywords land
+                 │   (required)            │  naturally. Check headings,
+                 │                         │  dates, contact format.
+                 └────────────┬────────────┘
+                              │ GATE 5: all ATS checks pass
+                              v
+                 ┌─────────────────────────┐
+                 │   STAGE 6: RENDER       │  Generate JSON schema.
+                 │   (required)            │  Run resume-skill render.
+                 │                         │  Produce .docx file.
+                 └────────────┬────────────┘
+                              │ GATE 6: schema validation PASS + DOCX written
+                              v
+                 ┌─────────────────────────┐
+                 │   STAGE 7: VALIDATE     │  Final checks: no placeholders,
+                 │   (required)            │  section order matches strategy,
+                 │                         │  bullet counts fit page target.
+                 └────────────┬────────────┘
+                              │
+                              v
+              ┌───────────────────────────────┐
+              │          OUTPUT               │
+              │  tailored_resume.docx         │
+              │  + strategy summary           │
+              │  + ATS keywords matched       │
+              │  + any honest gaps flagged    │
+              └───────────────────────────────┘
+```
+
+**Sequencing is enforced.** The skill cannot:
+- Draft bullets before JD analysis is complete
+- Run the ATS check before bullets are selected and rewritten
+- Render the DOCX before content validation passes
+- Deliver the final file before JSON schema validation passes
+
+---
+
 ## Requirements
 
 - Python 3.10 or later
