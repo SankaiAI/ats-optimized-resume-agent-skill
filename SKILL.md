@@ -69,7 +69,7 @@ Collect and normalize all inputs.
 - Target company name
 
 **Optional inputs** (infer or skip if not provided):
-- LinkedIn, GitHub, portfolio URLs — **actively scan the source resume text for these**; look for `linkedin.com/in/...` and `github.com/...` patterns. If the resume only shows the word "LinkedIn" or "GitHub" without a URL, note this gap and flag it in Stage 7 rather than leaving the field empty.
+- LinkedIn, GitHub, portfolio URLs — **actively scan the source resume text for these**; look for `linkedin.com/in/...` and `github.com/...` patterns. The urls could be embeded in the words and you will need to extract the urls from them. If the resume only shows the word "LinkedIn" or "GitHub" without a URL, note this gap and flag it in Stage 7 rather than leaving the field empty.
 - Career level preference (`new_grad / entry_level / mid_level / senior_ic / manager / director / auto`)
 - Output length preference (`one_page / two_page / auto`)
 - Tone preference (`conservative / modern_professional / technical / analytical`)
