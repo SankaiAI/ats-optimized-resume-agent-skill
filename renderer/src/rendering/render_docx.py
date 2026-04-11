@@ -287,6 +287,13 @@ class ResumeRenderer:
         style.font.name = cfg.font_name
         style.font.size = Pt(cfg.body_font_size)
 
+        # python-docx inserts one empty paragraph when Document() is created.
+        # Remove it so the name heading starts exactly at the top margin
+        # instead of being pushed down by an invisible blank line.
+        if doc.paragraphs and doc.paragraphs[0].text == "":
+            p = doc.paragraphs[0]._element
+            p.getparent().remove(p)
+
     # ── Section: Header ───────────────────────────────────────────────────
 
     def _render_header(self, header):

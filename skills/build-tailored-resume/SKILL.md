@@ -69,7 +69,7 @@ Collect and normalize all inputs.
 - Target company name
 
 **Optional inputs** (infer or skip if not provided):
-- LinkedIn, GitHub, portfolio URLs
+- LinkedIn, GitHub, portfolio URLs — **actively scan the source resume text for these**; look for `linkedin.com/in/...` and `github.com/...` patterns. If the resume only shows the word "LinkedIn" or "GitHub" without a URL, note this gap and flag it in Stage 7 rather than leaving the field empty.
 - Career level preference (`new_grad / entry_level / mid_level / senior_ic / manager / director / auto`)
 - Output length preference (`one_page / two_page / auto`)
 - Tone preference (`conservative / modern_professional / technical / analytical`)
@@ -349,20 +349,41 @@ Generate the structured resume JSON, then call the renderer.
 
 ### Render command
 
+**CRITICAL: Always use the official renderer. Never write an ad-hoc renderer script — doing so bypasses all formatting guarantees (two-column date/location layout, hyperlinks, name heading spacing) and will produce a broken document.**
+
+Step 1 — confirm the CLI is reachable:
 ```bash
-resume-skill render --input tailored_resume.json --output tailored_resume.docx
+resume-skill --version 2>/dev/null || echo "NOT_INSTALLED"
 ```
+
+Step 2 — if the output was `NOT_INSTALLED`, install via pip (package was installed at skill setup time; this just re-registers it):
+```bash
+pip install resume-skill --quiet 2>/dev/null || python -m pip install resume-skill --quiet
+```
+
+Step 3 — render using whichever invocation works:
+```bash
+# Primary (CLI on PATH):
+resume-skill render --input tailored_resume.json --output tailored_resume.docx
+
+# Fallback (module invocation — works even when PATH doesn't include Python Scripts):
+python -m resume_skill.cli render --input tailored_resume.json --output tailored_resume.docx
+```
+
+If neither works, diagnose the pip install error — do NOT fall back to writing a new renderer.
 
 Validate only (no DOCX):
 ```bash
 resume-skill validate --input tailored_resume.json
+# or
+python -m resume_skill.cli validate --input tailored_resume.json
 ```
 
 ### GATE 6
 
 Before declaring done, verify:
 - [ ] JSON schema validation passes (`resume-skill validate` reports PASS)
-- [ ] DOCX was written without errors
+- [ ] DOCX was written without errors — **if any render error occurs, diagnose and fix it; do not fall back to writing a new renderer**
 - [ ] Output path is confirmed and shown to the user
 
 ---
