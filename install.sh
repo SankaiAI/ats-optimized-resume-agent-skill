@@ -24,7 +24,7 @@ done
 
 echo ""
 echo "============================================================"
-echo "  build-tailored-resume — Claude Code Skill Installer"
+echo "  build-tailored-resume - Claude Code Skill Installer"
 echo "============================================================"
 
 # ── Interactive scope selection when no flag given ────────────────────────────
@@ -32,14 +32,14 @@ if [[ -z "$SCOPE" ]]; then
   echo ""
   echo "  Where do you want to install this skill?"
   echo ""
-  echo "  [1] User    — available in ALL your projects (recommended)"
+  echo "  [1] User    - available in ALL your projects (recommended)"
   echo "                installs to: ~/.claude/skills/"
   echo ""
-  echo "  [2] Project — current project only, shared with your team"
+  echo "  [2] Project - current project only, shared with your team"
   echo "                installs to: <project-root>/.claude/skills/"
   echo "                committed to git via .claude/settings.json"
   echo ""
-  echo "  [3] Local   — current project only, NOT committed to git"
+  echo "  [3] Local   - current project only, NOT committed to git"
   echo "                installs to: <project-root>/.claude/skills/"
   echo "                stays on this machine only"
   echo ""
@@ -83,7 +83,7 @@ echo ""
 
 # ── Step 1: pip install the Python package ────────────────────────────────────
 echo "[1/2] Installing resume-skill Python package..."
-pip install "$SCRIPT_DIR" --quiet
+pip install "$SCRIPT_DIR/renderer" --quiet
 echo "      Done - 'resume-skill' CLI is now available in PATH."
 
 # ── Step 2: Copy SKILL.md into named subdirectory ─────────────────────────────

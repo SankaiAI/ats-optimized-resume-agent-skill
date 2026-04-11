@@ -16,7 +16,7 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Write-Host ""
 Write-Host "============================================================"
-Write-Host "  build-tailored-resume — Claude Code Skill Installer"
+Write-Host "  build-tailored-resume - Claude Code Skill Installer"
 Write-Host "============================================================"
 
 # ── Interactive scope selection when no flag given ────────────────────────────
@@ -24,14 +24,14 @@ if ($Scope -eq "") {
     Write-Host ""
     Write-Host "  Where do you want to install this skill?"
     Write-Host ""
-    Write-Host "  [1] User    — available in ALL your projects (recommended)"
+    Write-Host "  [1] User    - available in ALL your projects (recommended)"
     Write-Host "                installs to: $HOME\.claude\skills\"
     Write-Host ""
-    Write-Host "  [2] Project — current project only, shared with your team"
+    Write-Host "  [2] Project - current project only, shared with your team"
     Write-Host "                installs to: <project-root>\.claude\skills\"
     Write-Host "                committed to git via .claude/settings.json"
     Write-Host ""
-    Write-Host "  [3] Local   — current project only, NOT committed to git"
+    Write-Host "  [3] Local   - current project only, NOT committed to git"
     Write-Host "                installs to: <project-root>\.claude\skills\"
     Write-Host "                stays on this machine only"
     Write-Host ""
@@ -73,7 +73,7 @@ Write-Host ""
 
 # ── Step 1: pip install the Python package ────────────────────────────────────
 Write-Host "[1/2] Installing resume-skill Python package..."
-pip install $ScriptDir --quiet
+pip install "$ScriptDir\renderer" --quiet
 if ($LASTEXITCODE -ne 0) {
     Write-Error "pip install failed. Ensure Python and pip are in PATH."
     exit 1

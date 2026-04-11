@@ -7,5 +7,5 @@ IF "%PLUGIN_ROOT%"=="" SET PLUGIN_ROOT=%~dp0..
 
 python -c "import docx" 2>nul || pip install python-docx lxml --quiet
 
-SET PYTHONPATH=%PLUGIN_ROOT%;%PYTHONPATH%
-python "%PLUGIN_ROOT%\src\cli.py" %*
+SET PYTHONPATH=%PLUGIN_ROOT%\renderer;%PYTHONPATH%
+python "%PLUGIN_ROOT%\renderer\src\cli.py" %*

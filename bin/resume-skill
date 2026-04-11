@@ -16,4 +16,4 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && p
 python -c "import docx" 2>/dev/null || pip install python-docx lxml --quiet
 
 # ── Run the CLI ───────────────────────────────────────────────────────────────
-PYTHONPATH="$PLUGIN_ROOT:$PYTHONPATH" python "$PLUGIN_ROOT/src/cli.py" "$@"
+PYTHONPATH="$PLUGIN_ROOT/renderer:$PYTHONPATH" python "$PLUGIN_ROOT/renderer/src/cli.py" "$@"

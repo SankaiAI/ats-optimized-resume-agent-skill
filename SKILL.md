@@ -164,7 +164,7 @@ Before writing a single bullet, define the resume's strategy in writing:
 |-------|---------------|
 | new_grad / intern | Education → Experience → Projects → Skills → Awards |
 | entry_level | Experience → Skills → Education → Projects |
-| mid_level / senior_ic | Summary → Skills → Experience → Projects → Education |
+| mid_level / senior_ic | Summary → Skills(Optional if decided to mentioned the skills in the experience directly to make all content on single page to save space) → Experience → Projects → Education |
 | manager / director | Executive Summary → Experience → Education → Boards/Certs |
 
 5. **Sections to include or omit:**
