@@ -36,8 +36,8 @@ Once installed, invoke it in Claude Code with:
 > ```
 >
 > **Claude Code — Windows (project-level, current project only):**
-> ```powershell
-> git clone https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git $env:TEMP\build-tailored-resume; & "$env:TEMP\build-tailored-resume\install.ps1" -Scope project
+> ```bash
+> git clone https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git /tmp/build-tailored-resume && powershell.exe -ExecutionPolicy Bypass -File /tmp/build-tailored-resume/install.ps1 -Scope project -ProjectPath "$(pwd)"
 > ```
 >
 > **OpenClaw or other agents — Mac / Linux (global):**
@@ -220,7 +220,7 @@ Please install the build-tailored-resume Claude Code skill for me globally. Clon
 **Project-level install — current project only:**
 
 ```
-Please install the build-tailored-resume Claude Code skill for this project only. Clone the repo at https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git into a temporary directory, then run the install script with the project flag — install.sh --project on Mac/Linux, or install.ps1 -Scope project on Windows. After install, confirm it works by running resume-skill --help.
+Please install the build-tailored-resume Claude Code skill for this project only. Clone the repo at https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git into a temporary directory, then run the install script with the project flag. On Mac/Linux run: install.sh --project --project-path="$(pwd)". On Windows run: powershell.exe -ExecutionPolicy Bypass -File install.ps1 -Scope project -ProjectPath "$(pwd)". After install, confirm it works by running resume-skill --help.
 ```
 
 Then invoke it:
@@ -548,8 +548,8 @@ pip uninstall resume-skill
 > ```
 >
 > **Claude Code — Windows（项目级，仅当前项目）：**
-> ```powershell
-> git clone https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git $env:TEMP\build-tailored-resume; & "$env:TEMP\build-tailored-resume\install.ps1" -Scope project
+> ```bash
+> git clone https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git /tmp/build-tailored-resume && powershell.exe -ExecutionPolicy Bypass -File /tmp/build-tailored-resume/install.ps1 -Scope project -ProjectPath "$(pwd)"
 > ```
 >
 > **OpenClaw 或其他代理 — Mac / Linux（全局）：**
@@ -728,7 +728,7 @@ pip uninstall resume-skill
 **项目级安装 — 仅当前项目可用：**
 
 ```
-请帮我为当前项目安装 build-tailored-resume 这个 Claude Code 技能。将仓库 https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git 克隆到一个临时目录，然后用项目参数运行安装脚本——Mac/Linux 运行 install.sh --project，Windows 运行 install.ps1 -Scope project。安装完成后运行 resume-skill --help 确认安装成功。
+请帮我为当前项目安装 build-tailored-resume 这个 Claude Code 技能。将仓库 https://github.com/SankaiAI/ats-optimized-resume-agent-skill.git 克隆到一个临时目录，然后用项目参数运行安装脚本。Mac/Linux 运行：install.sh --project --project-path="$(pwd)"；Windows 运行：powershell.exe -ExecutionPolicy Bypass -File install.ps1 -Scope project -ProjectPath "$(pwd)"。安装完成后运行 resume-skill --help 确认安装成功。
 ```
 
 安装后调用：

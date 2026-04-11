@@ -8,7 +8,8 @@
 
 param(
     [ValidateSet("user", "project", "local", "")]
-    [string]$Scope = ""
+    [string]$Scope = "",
+    [string]$ProjectPath = ""
 )
 
 $SkillName = "build-tailored-resume"
@@ -50,15 +51,19 @@ Write-Host "  Scope: $Scope"
 if ($Scope -eq "user") {
     $SkillsDir = Join-Path $HOME ".claude\skills"
 } else {
-    # Walk up to find project root (.git or .claude directory)
-    $ProjectRoot = (Get-Location).Path
-    while ($true) {
-        if ((Test-Path (Join-Path $ProjectRoot ".git")) -or (Test-Path (Join-Path $ProjectRoot ".claude"))) {
-            break
+    if ($ProjectPath -ne "") {
+        $ProjectRoot = $ProjectPath
+    } else {
+        # Walk up to find project root (.git or .claude directory)
+        $ProjectRoot = (Get-Location).Path
+        while ($true) {
+            if ((Test-Path (Join-Path $ProjectRoot ".git")) -or (Test-Path (Join-Path $ProjectRoot ".claude"))) {
+                break
+            }
+            $Parent = Split-Path $ProjectRoot -Parent
+            if ($Parent -eq $ProjectRoot) { break }   # reached filesystem root
+            $ProjectRoot = $Parent
         }
-        $Parent = Split-Path $ProjectRoot -Parent
-        if ($Parent -eq $ProjectRoot) { break }   # reached filesystem root
-        $ProjectRoot = $Parent
     }
     $SkillsDir = Join-Path $ProjectRoot ".claude\skills"
 

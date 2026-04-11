@@ -49,7 +49,7 @@ def _validate_cmd(args):
 def main():
     parser = argparse.ArgumentParser(
         prog="resume-skill",
-        description="Resume skill CLI — render and validate tailored resume JSON",
+        description="Resume skill CLI - render and validate tailored resume JSON",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 

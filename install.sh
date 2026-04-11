@@ -12,13 +12,15 @@ set -e
 SKILL_NAME="build-tailored-resume"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCOPE=""
+PROJECT_PATH=""
 
 # ── Parse flags ───────────────────────────────────────────────────────────────
 for arg in "$@"; do
   case "$arg" in
-    --user)    SCOPE="user"    ;;
-    --project) SCOPE="project" ;;
-    --local)   SCOPE="local"   ;;
+    --user)             SCOPE="user"    ;;
+    --project)          SCOPE="project" ;;
+    --local)            SCOPE="local"   ;;
+    --project-path=*)   PROJECT_PATH="${arg#*=}" ;;
   esac
 done
 
@@ -64,11 +66,15 @@ case "$SCOPE" in
     SKILLS_DIR="$HOME/.claude/skills"
     ;;
   project|local)
-    PROJECT_ROOT="$(pwd)"
-    while [[ "$PROJECT_ROOT" != "/" ]]; do
-      if [[ -d "$PROJECT_ROOT/.git" || -d "$PROJECT_ROOT/.claude" ]]; then break; fi
-      PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
-    done
+    if [[ -n "$PROJECT_PATH" ]]; then
+      PROJECT_ROOT="$PROJECT_PATH"
+    else
+      PROJECT_ROOT="$(pwd)"
+      while [[ "$PROJECT_ROOT" != "/" ]]; do
+        if [[ -d "$PROJECT_ROOT/.git" || -d "$PROJECT_ROOT/.claude" ]]; then break; fi
+        PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
+      done
+    fi
     SKILLS_DIR="$PROJECT_ROOT/.claude/skills"
 
     if [[ "$SCOPE" == "local" ]]; then
